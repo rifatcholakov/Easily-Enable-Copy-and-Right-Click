@@ -1,7 +1,11 @@
+import { styles } from './Footer.styles';
+
 function Footer() {
     return (
-        <footer className="footer">
-            <p>Made with ❤️ by <a href="https://rifatcholakov.com" target="_blank">Rifat Cholakov</a></p>
+        <footer style={styles.footer}>
+            <p style={styles.paragraph}>
+                Made with ❤️ by <a className="footer-link" href="https://rifatcholakov.com" target="_blank">Rifat Cholakov</a>
+            </p>
         </footer>
     );
 }

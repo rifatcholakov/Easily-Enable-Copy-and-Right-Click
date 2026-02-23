@@ -1,6 +1,8 @@
+import { styles } from './HostnameBadge.styles';
+
 function HostnameBadge({ hostname }) {
     return (
-        <p className="host-badge">{hostname}</p>
+        <p style={styles.badge}>{hostname}</p>
     );
 }
 

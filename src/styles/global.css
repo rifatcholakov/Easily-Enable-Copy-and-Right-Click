@@ -1,0 +1,100 @@
+/* --- Dark Mode (Default) --- */
+:root {
+    --primary-color: #3b82f6;
+    --bg-color: #0f172a;
+    --text-color: #f8fafc;
+    --card-bg: #1e293b;
+    --card-border: #334155;
+    --subtitle-color: #94a3b8;
+    --footer-color: #64748b;
+    --success-color: #22c55e;
+    --btn-hover-bg: #334155;
+    --btn-text-color: #f8fafc;
+    --btn-border-color: #475569;
+    --header-gradient: linear-gradient(135deg, #60a5fa, #3b82f6);
+    --inactive-color: #ef4444;
+    --pulse-color: rgba(34, 197, 94, 0.7);
+    --btn-active-bg: rgba(59, 130, 246, 0.1);
+    --btn-active-bg-hover: rgba(59, 130, 246, 0.2);
+}
+
+/* --- Light Mode --- */
+@media (prefers-color-scheme: light) {
+    :root {
+        --primary-color: #2563eb;
+        --bg-color: #f1f5f9;
+        --text-color: #0f172a;
+        --card-bg: #ffffff;
+        --card-border: #e2e8f0;
+        --subtitle-color: #475569;
+        --footer-color: #94a3b8;
+        --success-color: #16a34a;
+        --btn-hover-bg: #e2e8f0;
+        --btn-text-color: #0f172a;
+        --btn-border-color: #cbd5e1;
+        --header-gradient: linear-gradient(135deg, #3b82f6, #2563eb);
+        --inactive-color: #dc2626;
+        --pulse-color: rgba(22, 163, 74, 0.7);
+        --btn-active-bg: rgba(37, 99, 235, 0.1);
+        --btn-active-bg-hover: rgba(37, 99, 235, 0.2);
+    }
+}
+
+/* --- Global --- */
+body {
+    margin: 0;
+    padding: 0;
+    width: 320px;
+    height: 400px;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* --- Pulse Animation (can't be done inline) --- */
+@keyframes pulse-ring {
+    0% {
+        transform: scale(0.9);
+        box-shadow: 0 0 0 0 var(--pulse-color);
+    }
+
+    70% {
+        transform: scale(1.5);
+        box-shadow: 0 0 0 10px transparent;
+    }
+
+    100% {
+        transform: scale(0.9);
+        box-shadow: 0 0 0 0 transparent;
+    }
+}
+
+.pulse {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    animation: pulse-ring 2s infinite cubic-bezier(0.66, 0, 0, 1);
+}
+
+/* --- Pseudo-selectors (can't be done inline) --- */
+.toggle-btn:hover {
+    background-color: var(--btn-hover-bg);
+}
+
+.toggle-btn:active {
+    outline: none;
+}
+
+.toggle-btn.btn-active:hover {
+    background-color: var(--btn-active-bg-hover);
+}
+
+.footer-link {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.footer-link:hover {
+    text-decoration: underline;
+}

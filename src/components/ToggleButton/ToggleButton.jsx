@@ -1,7 +1,15 @@
+import { styles } from './ToggleButton.styles';
+
 function ToggleButton({ isActive, disabled, onClick }) {
+    const buttonStyle = {
+        ...styles.button,
+        ...(isActive ? styles.buttonActive : {}),
+    };
+
     return (
         <button
-            className={`toggle-btn ${isActive ? 'btn-active' : ''}`}
+            style={buttonStyle}
+            className={isActive ? 'toggle-btn btn-active' : 'toggle-btn'}
             onClick={onClick}
             disabled={disabled}
         >

@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import { DEFAULT_ACTIVE_STATE, getSiteKey } from './config';
-import './App.css';
 import StatusCard from './components/StatusCard/StatusCard';
 import Footer from './components/Footer/Footer';
 import Header from './components/Header/Header';
 import HostnameBadge from './components/HostnameBadge/HostnameBadge';
 import { getCurrentHostname, getSiteState, setSiteState } from './services/chrome';
 import ToggleButton from './components/ToggleButton/ToggleButton';
+import './styles/global.css';
+import { styles } from './App.styles';
+
 
 function App() {
   const [isActive, setIsActive] = useState(DEFAULT_ACTIVE_STATE);
@@ -38,13 +40,13 @@ function App() {
   };
 
   return (
-    <div className="extension-container">
+    <div style={styles.container}>
       <Header />
 
       <StatusCard isActive={isActive} />
       <HostnameBadge hostname={hostname} />
 
-      <div className="action-area">
+      <div style={styles.actionArea}>
         <ToggleButton
           isActive={isActive}
           disabled={!siteKey}

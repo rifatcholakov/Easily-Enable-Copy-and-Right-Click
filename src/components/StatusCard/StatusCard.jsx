@@ -1,10 +1,17 @@
+import { styles } from './StatusCard.styles';
+
 function StatusCard({ isActive }) {
+    const indicatorStyle = {
+        ...styles.indicator,
+        ...(isActive ? styles.indicatorActive : styles.indicatorInactive),
+    };
+
     return (
-        <div className="status-card">
-            <div className={`status-indicator ${isActive ? 'active' : 'inactive'}`}>
-                <span className="pulse"></span>
+        <div style={styles.card}>
+            <div style={indicatorStyle}>
+                {isActive && <span className="pulse"></span>}
             </div>
-            <h2>{isActive ? 'Active and Running' : 'Stopped'}</h2>
+            <h2 style={styles.title}>{isActive ? 'Active and Running' : 'Stopped'}</h2>
         </div>
     );
 }
