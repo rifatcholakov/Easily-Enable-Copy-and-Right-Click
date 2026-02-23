@@ -1,6 +1,12 @@
 import { useState, useEffect } from 'react';
 import { DEFAULT_ACTIVE_STATE, getSiteKey } from './config';
 import './App.css';
+import StatusCard from './components/StatusCard/StatusCard';
+import Footer from './components/Footer/Footer';
+import Header from './components/Header/Header';
+import HostnameBadge from './components/HostnameBadge/HostnameBadge';
+import { getCurrentHostname, getSiteState, setSiteState } from './services/chrome';
+import ToggleButton from './components/ToggleButton/ToggleButton';
 
 function App() {
   const [isActive, setIsActive] = useState(DEFAULT_ACTIVE_STATE);
@@ -8,27 +14,16 @@ function App() {
   const [hostname, setHostname] = useState(null);
 
   useEffect(() => {
-    if (typeof chrome === 'undefined'
-      || !chrome.storage
-      || !chrome.tabs
-    ) {
-      return;
-    }
-
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      if (!tabs[0]?.url) {
+    getCurrentHostname().then((host) => {
+      if (!host) {
         return;
       }
 
-      const hostname = new URL(tabs[0].url).hostname;
-      const key = getSiteKey(hostname);
+      const key = getSiteKey(host);
+
+      setHostname(host);
       setSiteKey(key);
-      setHostname(hostname);
-
-      chrome.storage.local.get([key], (result) => {
-        setIsActive(result[key] === true);
-      });
-
+      getSiteState(key).then(setIsActive);
     });
   }, []);
 
@@ -39,47 +34,25 @@ function App() {
 
     const newState = !isActive;
     setIsActive(newState);
-
-    if (typeof chrome === 'undefined' || !chrome.storage) {
-      return;
-    }
-
-    chrome.storage.local.set({
-      [siteKey]: newState
-    });
+    setSiteState(siteKey, newState);
   };
 
   return (
     <div className="extension-container">
-      <header className="header">
-        <h1>Easily Enable Copy and Right-Click</h1>
-        <p className="subtitle">
-          This extension prevents websites from blocking text copying or right-clicking.
-        </p>
-      </header>
+      <Header />
 
-      <div className="status-card">
-        <div className={`status-indicator ${isActive ? 'active' : 'inactive'}`}>
-          <span className="pulse"></span>
-        </div>
-        <h2>{isActive ? 'Active and Running' : 'Stopped'}</h2>
-      </div>
-
-      <p className="host-badge">{hostname}</p>
+      <StatusCard isActive={isActive} />
+      <HostnameBadge hostname={hostname} />
 
       <div className="action-area">
-        <button
-          className={`toggle-btn ${isActive ? 'btn-active' : ''}`}
-          onClick={toggleExtension}
+        <ToggleButton
+          isActive={isActive}
           disabled={!siteKey}
-        >
-          {isActive ? 'Disable for this site' : 'Enable for this site'}
-        </button>
+          onClick={toggleExtension}
+        />
       </div>
 
-      <footer className="footer">
-        <p>Made with ❤️ by <a href="https://rifatcholakov.com" target="_blank">Rifat Cholakov</a></p>
-      </footer>
+      <Footer />
     </div>
   )
 }

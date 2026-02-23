@@ -1,86 +1,22 @@
 import { DEFAULT_ACTIVE_STATE, getSiteKey } from "./config";
+import { applyCssBlocking, removeCssBlocking } from "./services/cssBlocker";
+import { initEventBlocker } from "./services/eventBlocker";
+import { initStorageListener } from "./services/chrome";
 
 let isExtensionActive = DEFAULT_ACTIVE_STATE;
 const siteKey = getSiteKey(window.location.hostname);
 
-if (typeof chrome !== 'undefined' && chrome.storage) {
-    chrome.storage.local.get([siteKey], (result) => {
-        isExtensionActive = result[siteKey] === true;
-        updateCssBlocking();
-    });
+const getIsExtensionActive = () => isExtensionActive;
 
-    chrome.storage.onChanged.addListener((changes, namespace) => {
-        if (namespace === 'local' && changes[siteKey]) {
-            isExtensionActive = changes[siteKey].newValue;
-            updateCssBlocking();
-        }
-
-    });
-}
-
-const blockedEvents = [
-    'contextmenu',
-    'copy',
-    'cut',
-    'paste',
-    'selectstart',
-    'dragstart',
-    'mousedown',
-    'mouseup'
-];
-
-blockedEvents.forEach(eventName => {
-    document.addEventListener(eventName, (event) => {
-        if (isExtensionActive) {
-            event.stopPropagation();
-        }
-    }, true);
-});
-
-document.addEventListener('keydown', (event) => {
-    if (!isExtensionActive) {
-        return;
-    }
-
-    const isModifierPressed = event.ctrlKey || event.metaKey;
-
-    const protectedKeys = ['c', 'x', 'v', 'a', 'p'];
-
-    if (isModifierPressed && protectedKeys.includes(event.key.toLowerCase())) {
-        event.stopPropagation();
-    }
-}, true);
-
-let styleElement = null;
-const updateCssBlocking = () => {
-    if (isExtensionActive) {
-        if (!styleElement) {
-            const css = `
-                            * {
-                                -webkit-user-select: auto !important;
-                                -moz-user-select: auto !important;
-                                -ms-user-select: auto !important;
-                                user-select: auto !important;
-                                cursor: auto !important;
-
-                                a, a *, button, button *, [role="button"] {
-                                    cursor: pointer !important;
-                                }
-                            }
-                        `;
-
-            styleElement = document.createElement('style');
-            styleElement.appendChild(document.createTextNode(css));
-
-            (document.head || document.documentElement).appendChild(styleElement);
-        }
-    } else {
-        if (styleElement && styleElement.parentNode) {
-            styleElement.parentNode.removeChild(styleElement);
-            styleElement = null;
-        }
-    }
+const updateCssBlockingState = () => {
+    isExtensionActive ? applyCssBlocking() : removeCssBlocking();
 };
 
-// Initial run
-updateCssBlocking();
+initEventBlocker(getIsExtensionActive);
+updateCssBlockingState();
+
+initStorageListener(siteKey, (newState) => {
+    isExtensionActive = newState;
+    updateCssBlockingState();
+});
+
