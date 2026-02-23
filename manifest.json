@@ -1,0 +1,24 @@
+{
+    "manifest_version": 3,
+    "name": "Enable Right Click & Copy",
+    "version": "1.0.0",
+    "description": "Force enables right click, text selection and copying on any website.",
+    "action": {
+        "default_popup": "index.html"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "js": [
+                "src/content.jsx"
+            ],
+            "run_at": "document_start"
+        }
+    ],
+    "permissions": [
+        "activeTab",
+        "scripting"
+    ]
+}
