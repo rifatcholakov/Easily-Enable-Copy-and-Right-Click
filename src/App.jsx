@@ -1,13 +1,14 @@
-import { useState, useEffect } from 'react'
-import './App.css'
+import { useState, useEffect } from 'react';
+import { DEFAULT_ACTIVE_STATE, STORAGE_KEY } from './config';
+import './App.css';
 
 function App() {
-  const [isActive, setIsActive] = useState(false);
+  const [isActive, setIsActive] = useState(DEFAULT_ACTIVE_STATE);
 
   useEffect(() => {
     if (typeof chrome !== 'undefined' && chrome.storage) {
-      chrome.storage.local.get(['extensionActive'], (result) => {
-        setIsActive(result.extensionActive === true);
+      chrome.storage.local.get([STORAGE_KEY], (result) => {
+        setIsActive(result[STORAGE_KEY] === true);
       });
     }
   }, []);
@@ -18,7 +19,7 @@ function App() {
 
     if (typeof chrome !== 'undefined' && chrome.storage) {
       chrome.storage.local.set({
-        extensionActive: newState
+        [STORAGE_KEY]: newState
       });
     }
   };
