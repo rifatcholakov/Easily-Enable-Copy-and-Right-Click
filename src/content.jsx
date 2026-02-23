@@ -1,8 +1,8 @@
-let isExtensionActive = true;
+let isExtensionActive = false;
 
 if (typeof chrome !== 'undefined' && chrome.storage) {
     chrome.storage.local.get(['extensionActive'], (result) => {
-        isExtensionActive = result.extensionActive !== false;
+        isExtensionActive = result.extensionActive === true;
         updateCssBlocking();
     });
 

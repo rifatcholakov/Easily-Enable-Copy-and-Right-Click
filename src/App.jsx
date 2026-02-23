@@ -2,12 +2,12 @@ import { useState, useEffect } from 'react'
 import './App.css'
 
 function App() {
-  const [isActive, setIsActive] = useState(true);
+  const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
     if (typeof chrome !== 'undefined' && chrome.storage) {
       chrome.storage.local.get(['extensionActive'], (result) => {
-        setIsActive(result.extensionActive !== false);
+        setIsActive(result.extensionActive === true);
       });
     }
   }, []);
@@ -34,18 +34,18 @@ function App() {
         <div className={`status-indicator ${isActive ? 'active' : 'inactive'}`}>
           <span className="pulse"></span>
         </div>
-        <h2>{isActive ? 'Active and Running' : 'Paused'}</h2>
-        <p>This extension automatically intercepts attempts by websites to block you.</p>
+        <h2>{isActive ? 'Active and Running' : 'Stopped'}</h2>
+        <p>This extension prevents websites from blocking text copying or right-clicking.</p>
       </div>
 
       <div className="action-area">
         <button className={`toggle-btn ${isActive ? 'btn-active' : ''}`} onClick={toggleExtension}>
-          {isActive ? 'Pause Extension' : 'Enable Extension'}
+          {isActive ? 'Stop Extension' : 'Enable Extension'}
         </button>
       </div>
 
       <footer className="footer">
-        Works on any website automatically!
+        Works on any website!
       </footer>
     </div>
   )
