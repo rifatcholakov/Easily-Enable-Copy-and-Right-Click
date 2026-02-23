@@ -25,7 +25,7 @@ export const getCurrentHostname = () => {
     });
 };
 
-export const getSiteState = (siteKey) => {
+export const getExtensionStateForSite = (siteKey) => {
     return new Promise((resolve) => {
         if (!isChromeStorageAvailable()) {
             return resolve(false);
@@ -37,7 +37,7 @@ export const getSiteState = (siteKey) => {
     });
 };
 
-export const setSiteState = (siteKey, value) => {
+export const setExtensionStateForSite = (siteKey, value) => {
     if (!isChromeStorageAvailable()) {
         return;
     }
@@ -45,7 +45,7 @@ export const setSiteState = (siteKey, value) => {
     chrome.storage.local.set({ [siteKey]: value });
 };
 
-export const onStateChange = (siteKey, callback) => {
+const onStorageStateChange = (siteKey, callback) => {
     if (!isChromeStorageAvailable()) {
         return;
     }
@@ -58,11 +58,13 @@ export const onStateChange = (siteKey, callback) => {
 };
 
 export const initStorageListener = (siteKey, onUpdate) => {
-    if (!isChromeStorageAvailable()) return;
+    if (!isChromeStorageAvailable()) {
+        return;
+    }
 
     chrome.storage.local.get([siteKey], (result) => {
         onUpdate(result[siteKey] === true);
     });
 
-    onStateChange(siteKey, onUpdate);
+    onStorageStateChange(siteKey, onUpdate);
 };

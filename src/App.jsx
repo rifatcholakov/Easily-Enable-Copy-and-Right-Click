@@ -10,7 +10,12 @@ import ToggleButton from './components/ToggleButton/ToggleButton';
 import Footer from './components/Footer/Footer';
 
 function App() {
-  const { isActive, hostname, isReady, toggleActive } = useSiteState();
+  const {
+    isActive,
+    hostname,
+    isLoading,
+    toggleSiteExtension
+  } = useSiteState();
 
   return (
     <div style={styles.container}>
@@ -21,8 +26,8 @@ function App() {
       <div style={styles.actionArea}>
         <ToggleButton
           isActive={isActive}
-          disabled={!isReady}
-          onClick={toggleActive}
+          disabled={isLoading}
+          onClick={toggleSiteExtension}
         />
       </div>
 
