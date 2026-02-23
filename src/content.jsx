@@ -58,6 +58,11 @@ const updateCssBlocking = () => {
                                 -moz-user-select: auto !important;
                                 -ms-user-select: auto !important;
                                 user-select: auto !important;
+                                cursor: auto !important;
+
+                                a, a *, button, button *, [role="button"] {
+                                    cursor: pointer !important;
+                                }
                             }
                         `;
 
