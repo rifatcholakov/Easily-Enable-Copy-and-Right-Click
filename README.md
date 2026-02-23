@@ -1,16 +1,81 @@
-# React + Vite
+# 🔓 Easily Enable Copy and Right-Click
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Take back control of your web browsing experience!**
 
-Currently, two official plugins are available:
+Easily Enable Copy and Right-Click is a powerful, privacy-first Chrome extension that allows you to copy text, right-click, and select content on websites that aggressively block these basic browser features. 
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+![Version](https://img.shields.io/badge/version-1.0-blue.svg)
+![Manifest](https://img.shields.io/badge/manifest-V3-orange.svg)
+![License](https://img.shields.io/badge/license-MIT-green.svg)
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## ✨ Key Features
 
-## Expanding the ESLint configuration
+- **✅ Unblock Everything:** Instantly restores Context Menu, Copy, Cut, Paste, and Text Selection functionality.
+- **🎯 Per-Site Control:** The extension is disabled by default. You choose exactly which websites it runs on.
+- **⌨️ Restores Shortcuts:** Successfully intercepts and allows keyboard shortcuts like `Ctrl+C`, `Ctrl+X`, `Ctrl+V`, `Ctrl+A`, and `Ctrl+P`.
+- **💎 Clean UI:** A modern, minimalist popup interface built with React that perfectly adapts to your system's Light/Dark mode.
+- **⚡ Zero Overhead:** Uses optimized DOM event capturing—only injecting the exact logic needed for the specific site.
+- **🔒 Privacy First:** Your data never leaves your browser. No analytics, no tracking.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## 🛠️ How it Works
+
+The extension works by injecting a tiny, highly-optimized content script that intercepts malicious scripts trying to block your actions:
+1. **CSS Overrides:** It dynamically injects `user-select: auto !important` to override stylesheets trying to block text highlighting.
+2. **Event Interception:** It captures DOM events (`contextmenu`, `copy`, `selectstart`, `keydown`) during the *capture phase* and immediately stops propagation, preventing the website's blocking scripts from ever receiving the event.
+3. **State Management:** Uses Chrome's `storage.local` API to remember your exact preference for every hostname you visit.
+
+---
+
+## 🚀 Installation (Development Mode)
+
+Since this extension is in active development, you can install it manually:
+
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/rifatcholakov/enable-copy.git
+    cd enable-copy
+    ```
+2.  **Install dependencies and build the project:**
+    ```bash
+    npm install
+    npm run build
+    ```
+3.  Open Chrome and navigate to `chrome://extensions/`.
+4.  Enable **"Developer mode"** (toggle in the top right).
+5.  Click **"Load unpacked"** and select the `/dist` folder inside the project directory.
+
+---
+
+## 💻 Tech Stack
+
+- **Frontend Framework:** [React 18](https://react.dev/)
+- **Build Tool:** [Vite](https://vitejs.dev/) with `@crxjs/vite-plugin` for optimized extension bundling.
+- **Styling:** Vanilla CSS with a centralized token system (CSS-in-JS + Global Variables).
+- **Architecture:** Clean, modular service-oriented architecture (isolating Chrome APIs, UI components, and Content Scripts).
+
+---
+
+## 🛡️ Privacy & Security
+
+We value your privacy. Easily Enable Copy and Right-Click:
+- Does **not** collect any personal data or browsing history.
+- Processes all logic entirely locally on your machine.
+- Requires only the absolute minimum permissions needed to function (`activeTab`, `storage`, `scripting`).
+
+---
+
+## 👨‍💻 Author
+
+**Rifat Cholakov**
+- Website: [rifatcholakov.com](https://rifatcholakov.com)
+- GitHub: [@rifatcholakov](https://github.com/rifatcholakov)
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.

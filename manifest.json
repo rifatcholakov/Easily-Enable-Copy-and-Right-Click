@@ -1,6 +1,6 @@
 {
     "manifest_version": 3,
-    "name": "Enable Right Click & Copy",
+    "name": "Easily Enable Copy and Right-Click",
     "version": "1.0.0",
     "description": "Force enables right click, text selection and copying on any website.",
     "action": {
