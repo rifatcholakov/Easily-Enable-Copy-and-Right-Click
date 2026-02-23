@@ -1,62 +1,34 @@
-import { useState, useEffect } from 'react';
-import { DEFAULT_ACTIVE_STATE, getSiteKey } from './config';
-import StatusCard from './components/StatusCard/StatusCard';
-import Footer from './components/Footer/Footer';
-import Header from './components/Header/Header';
-import HostnameBadge from './components/HostnameBadge/HostnameBadge';
-import { getCurrentHostname, getSiteState, setSiteState } from './services/chrome';
-import ToggleButton from './components/ToggleButton/ToggleButton';
 import './styles/global.css';
 import { styles } from './App.styles';
 
+import { useSiteState } from './hooks/useSiteState';
+
+import Header from './components/Header/Header';
+import StatusCard from './components/StatusCard/StatusCard';
+import HostnameBadge from './components/HostnameBadge/HostnameBadge';
+import ToggleButton from './components/ToggleButton/ToggleButton';
+import Footer from './components/Footer/Footer';
 
 function App() {
-  const [isActive, setIsActive] = useState(DEFAULT_ACTIVE_STATE);
-  const [siteKey, setSiteKey] = useState(null);
-  const [hostname, setHostname] = useState(null);
-
-  useEffect(() => {
-    getCurrentHostname().then((host) => {
-      if (!host) {
-        return;
-      }
-
-      const key = getSiteKey(host);
-
-      setHostname(host);
-      setSiteKey(key);
-      getSiteState(key).then(setIsActive);
-    });
-  }, []);
-
-  const toggleExtension = () => {
-    if (!siteKey) {
-      return;
-    }
-
-    const newState = !isActive;
-    setIsActive(newState);
-    setSiteState(siteKey, newState);
-  };
+  const { isActive, hostname, isReady, toggleActive } = useSiteState();
 
   return (
     <div style={styles.container}>
       <Header />
-
       <StatusCard isActive={isActive} />
       <HostnameBadge hostname={hostname} />
 
       <div style={styles.actionArea}>
         <ToggleButton
           isActive={isActive}
-          disabled={!siteKey}
-          onClick={toggleExtension}
+          disabled={!isReady}
+          onClick={toggleActive}
         />
       </div>
 
       <Footer />
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
