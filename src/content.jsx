@@ -34,6 +34,19 @@ blockedEvents.forEach(eventName => {
     }, true);
 });
 
+document.addEventListener('keydown', (event) => {
+    if (!isExtensionActive) {
+        return;
+    }
+
+    const isModifierPressed = event.ctrlKey || event.metaKey;
+
+    const protectedKeys = ['c', 'x', 'v', 'a', 'p'];
+
+    if (isModifierPressed && protectedKeys.includes(event.key.toLowerCase())) {
+        event.stopPropagation();
+    }
+}, true);
 
 let styleElement = null;
 const updateCssBlocking = () => {
