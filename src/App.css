@@ -83,7 +83,7 @@ body {
   border-radius: 12px;
   padding: 20px;
   text-align: center;
-  margin-bottom: 24px;
+  margin-bottom: 0;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   border: 1px solid var(--card-border);
   flex-grow: 1;
@@ -198,4 +198,17 @@ body {
 
 .footer a:hover {
   text-decoration: underline;
+}
+
+.host-badge {
+  display: block;
+  margin-top: 8px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 16px;
+  font-weight: 500;
+  background-color: var(--card-bg);
+  color: var(--subtitle-color);
+  border: 1px solid var(--card-border);
+  text-align: center;
 }

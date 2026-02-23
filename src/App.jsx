@@ -1,34 +1,61 @@
 import { useState, useEffect } from 'react';
-import { DEFAULT_ACTIVE_STATE, STORAGE_KEY } from './config';
+import { DEFAULT_ACTIVE_STATE, getSiteKey } from './config';
 import './App.css';
 
 function App() {
   const [isActive, setIsActive] = useState(DEFAULT_ACTIVE_STATE);
+  const [siteKey, setSiteKey] = useState(null);
+  const [hostname, setHostname] = useState(null);
 
   useEffect(() => {
-    if (typeof chrome !== 'undefined' && chrome.storage) {
-      chrome.storage.local.get([STORAGE_KEY], (result) => {
-        setIsActive(result[STORAGE_KEY] === true);
-      });
+    if (typeof chrome === 'undefined'
+      || !chrome.storage
+      || !chrome.tabs
+    ) {
+      return;
     }
+
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (!tabs[0]?.url) {
+        return;
+      }
+
+      const hostname = new URL(tabs[0].url).hostname;
+      const key = getSiteKey(hostname);
+      setSiteKey(key);
+      setHostname(hostname);
+
+      chrome.storage.local.get([key], (result) => {
+        setIsActive(result[key] === true);
+      });
+
+    });
   }, []);
 
   const toggleExtension = () => {
+    if (!siteKey) {
+      return;
+    }
+
     const newState = !isActive;
     setIsActive(newState);
 
-    if (typeof chrome !== 'undefined' && chrome.storage) {
-      chrome.storage.local.set({
-        [STORAGE_KEY]: newState
-      });
+    if (typeof chrome === 'undefined' || !chrome.storage) {
+      return;
     }
+
+    chrome.storage.local.set({
+      [siteKey]: newState
+    });
   };
 
   return (
     <div className="extension-container">
       <header className="header">
         <h1>Easily Enable Copy and Right-Click</h1>
-        <p className="subtitle">Works on any website!</p>
+        <p className="subtitle">
+          This extension prevents websites from blocking text copying or right-clicking.
+        </p>
       </header>
 
       <div className="status-card">
@@ -36,12 +63,17 @@ function App() {
           <span className="pulse"></span>
         </div>
         <h2>{isActive ? 'Active and Running' : 'Stopped'}</h2>
-        <p>This extension prevents websites from blocking text copying or right-clicking.</p>
       </div>
 
+      <p className="host-badge">{hostname}</p>
+
       <div className="action-area">
-        <button className={`toggle-btn ${isActive ? 'btn-active' : ''}`} onClick={toggleExtension}>
-          {isActive ? 'Stop Extension' : 'Enable Extension'}
+        <button
+          className={`toggle-btn ${isActive ? 'btn-active' : ''}`}
+          onClick={toggleExtension}
+          disabled={!siteKey}
+        >
+          {isActive ? 'Disable for this site' : 'Enable for this site'}
         </button>
       </div>
 

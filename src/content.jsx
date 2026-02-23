@@ -1,16 +1,17 @@
-import { DEFAULT_ACTIVE_STATE, STORAGE_KEY } from "./config";
+import { DEFAULT_ACTIVE_STATE, getSiteKey } from "./config";
 
 let isExtensionActive = DEFAULT_ACTIVE_STATE;
+const siteKey = getSiteKey(window.location.hostname);
 
 if (typeof chrome !== 'undefined' && chrome.storage) {
-    chrome.storage.local.get([STORAGE_KEY], (result) => {
-        isExtensionActive = result[STORAGE_KEY] === true;
+    chrome.storage.local.get([siteKey], (result) => {
+        isExtensionActive = result[siteKey] === true;
         updateCssBlocking();
     });
 
     chrome.storage.onChanged.addListener((changes, namespace) => {
-        if (namespace === 'local' && changes[STORAGE_KEY]) {
-            isExtensionActive = changes[STORAGE_KEY].newValue;
+        if (namespace === 'local' && changes[siteKey]) {
+            isExtensionActive = changes[siteKey].newValue;
             updateCssBlocking();
         }
 
