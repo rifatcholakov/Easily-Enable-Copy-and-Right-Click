@@ -27,8 +27,8 @@ function App() {
   return (
     <div className="extension-container">
       <header className="header">
-        <h1>Enable Copy</h1>
-        <p className="subtitle">Right-Click & Copy Restore</p>
+        <h1>Easily Enable Copy and Right-Click</h1>
+        <p className="subtitle">Works on any website!</p>
       </header>
 
       <div className="status-card">
@@ -46,7 +46,7 @@ function App() {
       </div>
 
       <footer className="footer">
-        Works on any website!
+        <p>Made with ❤️ by <a href="https://rifatcholakov.com" target="_blank">Rifat Cholakov</a></p>
       </footer>
     </div>
   )
