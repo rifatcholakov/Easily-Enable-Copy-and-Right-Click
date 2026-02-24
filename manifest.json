@@ -1,8 +1,13 @@
 {
     "manifest_version": 3,
     "name": "Easily Enable Copy and Right-Click",
+    "short_name": "Enable Copy",
     "version": "1.0.0",
-    "description": "Force enables right click, text selection and copying on any website.",
+    "author": "Rifat Cholakov",
+    "homepage_url": "https://github.com/rifatcholakov/Easily-Enable-Copy-and-Right-Click",
+    "minimum_chrome_version": "102",
+    "offline_enabled": true,
+    "description": "This extension force-enables right-click, text selection, and copying on websites that try to block these basic features.",
     "icons": {
         "16": "icons/icon16.png",
         "32": "icons/icon32.png",
@@ -27,11 +32,25 @@
             "js": [
                 "src/content.jsx"
             ],
-            "run_at": "document_start"
+            "run_at": "document_start",
+            "all_frames": true,
+            "match_about_blank": true
         }
+    ],
+    "host_permissions": [
+        "<all_urls>"
     ],
     "permissions": [
         "activeTab",
         "storage"
-    ]
+    ],
+    "commands": {
+        "_execute_action": {
+            "suggested_key": {
+                "default": "Alt+Shift+E",
+                "mac": "Alt+Shift+E"
+            },
+            "description": "Open the extension popup"
+        }
+    }
 }

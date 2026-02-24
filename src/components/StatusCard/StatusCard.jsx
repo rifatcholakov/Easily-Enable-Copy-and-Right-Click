@@ -11,7 +11,13 @@ function StatusCard({ isActive }) {
             <div style={indicatorStyle}>
                 {isActive && <span className="pulse"></span>}
             </div>
-            <h2 style={styles.title}>{isActive ? 'Active and Running' : 'Stopped'}</h2>
+            <h2
+                style={styles.title}
+                role="status"
+                aria-live="polite"
+            >
+                {isActive ? 'Active and Running' : 'Stopped'}
+            </h2>
         </div>
     );
 }
