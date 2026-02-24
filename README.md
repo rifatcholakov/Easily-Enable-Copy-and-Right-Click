@@ -1,4 +1,4 @@
-# 🔓 Easily Enable Copy and Right-Click
+# 🖱️ Easily Enable Copy and Right-Click
 
 **Take back control of your web browsing experience!**
 
