@@ -1,44 +1,69 @@
-import { isExtensionTurnedOn } from './state';
+import { isExtensionTurnedOn } from './extensionState';
 
 /**
- * THE SELECTION SAVER
- * ---------------------
- * Some sites use code to "clear" your highlight as soon as you select text.
- * This part tells the browser: "If a site asks to clear the selection, ignore them if our extension is ON."
+ * THE SELECTION SAVER (The Unstoppable Text)
+ * -------------------------------------------
+ * Some sites try to be clever: as soon as you highlight text, 
+ * they run a script to "clear" your selection so you can't copy it.
+ * 
+ * This module is a "Saboteur". It wraps the browser's selection tool 
+ * and simply ignores any requests from the website to clear your text.
  */
 export const SelectionSaver = {
+    /**
+     * setup()
+     * We replace the browser's built-in 'getSelection' function with our own.
+     */
     setup() {
         const originalGetSelection = window.getSelection;
         const self = this;
 
-        // We "wrap" the browser's selection tool so we can control it.
         window.getSelection = function () {
             const selection = originalGetSelection.apply(this, arguments);
-            if (isExtensionTurnedOn()) self.makeSelectionUnstoppable(selection);
+
+            // If the extension is ON, we "harden" the selection object.
+            if (isExtensionTurnedOn()) {
+                self.makeSelectionUnstoppable(selection);
+            }
             return selection;
         };
+
+        // We do the same for the document-level selection tool.
         document.getSelection = window.getSelection;
     },
 
+    /**
+     * makeSelectionUnstoppable()
+     * This takes a selection object and breaks its "clear" buttons.
+     * 
+     * @param {Selection} selection - The selection object to protect.
+     */
     makeSelectionUnstoppable(selection) {
-        // We only need to protect a selection once.
+        // If it's already protected, we don't need to do it again.
         if (!selection || selection._alreadyProtected) return;
 
-        // Save the original "clear" functions.
         const originalClear = selection.removeAllRanges;
         const originalEmpty = selection.empty;
 
-        // Rewrite them to do NOTHING if our extension is active.
+        // When the site calls 'removeAllRanges()' (Clear)...
         selection.removeAllRanges = function () {
-            if (isExtensionTurnedOn()) return; // Sabotaged! The site can't clear your highlight.
+            if (isExtensionTurnedOn()) {
+                // ...we just do nothing! The text stays highlighted.
+                return;
+            }
             return originalClear.apply(this, arguments);
         };
 
+        // When the site calls 'empty()'...
         selection.empty = function () {
-            if (isExtensionTurnedOn()) return; // Sabotaged! 
+            if (isExtensionTurnedOn()) {
+                // ...we also do nothing.
+                return;
+            }
             return originalEmpty.apply(this, arguments);
         };
 
+        // Mark it as protected so we don't loop forever.
         selection._alreadyProtected = true;
     }
 };

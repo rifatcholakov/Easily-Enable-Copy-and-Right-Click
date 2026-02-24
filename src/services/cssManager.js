@@ -1,44 +1,27 @@
+import { CSS_BYPASS_RULES } from '../constants';
+
 /**
  * CSS Manager
  * -----------
- * Manages the injection and removal of CSS rules that disable CSS-based text selection blockers.
+ * Injects and removes the CSS rules that disable text-selection blockers.
  */
-
-const cssRules = `
-    * {
-        -webkit-user-select: auto !important;
-        -moz-user-select: auto !important;
-        -ms-user-select: auto !important;
-        user-select: auto !important;
-        cursor: auto !important;
-    }
-    ::selection {
-        background: #3b82f6 !important;
-        color: white !important;
-    }
-    ::-moz-selection {
-        background: #3b82f6 !important;
-        color: white !important;
-    }
-    html, body {
-        pointer-events: auto !important;
-        -webkit-user-drag: none !important;
-    }
-    a, a *, button, button *, [role="button"] {
-        cursor: pointer !important;
-    }
-`;
 
 let styleElement = null;
 
+/**
+ * Injects the bypass style sheet into the document.
+ */
 export const applyStyles = () => {
     if (styleElement) return;
     styleElement = document.createElement('style');
     styleElement.id = 'enable-copy-styles';
-    styleElement.textContent = cssRules;
+    styleElement.textContent = CSS_BYPASS_RULES;
     (document.head || document.documentElement).appendChild(styleElement);
 };
 
+/**
+ * Removes the bypass style sheet from the document.
+ */
 export const removeStyles = () => {
     if (styleElement && styleElement.parentNode) {
         styleElement.parentNode.removeChild(styleElement);
