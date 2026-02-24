@@ -1,6 +1,7 @@
 // src/hooks/useSiteState.js
 import { useState, useEffect } from 'react';
-import { DEFAULT_ACTIVE_STATE, getSiteKey } from '../config';
+import { DEFAULT_ACTIVE_STATE } from '../config';
+import { getSiteKey } from '../utils/siteUtils';
 import { getCurrentHostname, getExtensionStateForSite, setExtensionStateForSite } from '../services/chrome';
 
 export function useSiteState() {

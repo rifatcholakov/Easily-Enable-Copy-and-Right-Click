@@ -4,6 +4,8 @@ const isChromeStorageAvailable = () =>
 const isChromeTabsAvailable = () =>
     isChromeStorageAvailable() && !!chrome.tabs;
 
+import { formatHostname } from '../utils/siteUtils';
+
 export const getCurrentHostname = () => {
     return new Promise((resolve) => {
         if (!isChromeTabsAvailable()) {
@@ -11,13 +13,15 @@ export const getCurrentHostname = () => {
         }
 
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-            if (!tabs[0]?.url) {
+            const tab = tabs[0];
+            if (!tab?.url) {
                 return resolve(null);
             }
 
             try {
-                const hostname = new URL(tabs[0].url).hostname;
-                resolve(hostname);
+                const urlObj = new URL(tab.url);
+                const displayHost = formatHostname(urlObj.hostname, tab.url);
+                resolve(displayHost);
             } catch (error) {
                 resolve(null);
             }

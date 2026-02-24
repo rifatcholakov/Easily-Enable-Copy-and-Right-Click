@@ -7,9 +7,27 @@ const css = `
         -ms-user-select: auto !important;
         user-select: auto !important;
         cursor: auto !important;
+        pointer-events: auto !important;
     }
-    a, a *, button, button *, [role="button"] {
+    
+    a, a *, button, button *, [role="button"], input[type="button"], input[type="submit"] {
         cursor: pointer !important;
+    }
+
+    ::selection {
+        background: #b3d4fc !important;
+        color: #000 !important;
+    }
+
+    ::-moz-selection {
+        background: #b3d4fc !important;
+        color: #000 !important;
+    }
+
+    [style*="user-select"], [style*="pointer-events:none"], [unselectable="on"] {
+        pointer-events: auto !important;
+        visibility: visible !important;
+        opacity: 1 !important;
     }
 `;
 
