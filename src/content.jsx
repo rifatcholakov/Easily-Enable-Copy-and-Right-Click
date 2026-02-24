@@ -38,8 +38,27 @@ const updateState = (isActive) => {
 
 // --- INITIALIZATION ---
 
-// Start with the default state (usually OFF) when the page first loads.
+// 1. Start with the default state (usually OFF) when the page first loads.
 updateState(DEFAULT_ACTIVE_STATE);
+
+// 2. MANUAL INJECTION: We inject the "Bypass Engine" into the Main World.
+// We do this manually because automatic manifestation injection can be buggy.
+const injectBypassEngine = () => {
+    const script = document.createElement('script');
+
+    // We use the bundled asset path. In production, this is a single file 
+    // that contains all our bypass logic and its dependencies.
+    script.src = chrome.runtime.getURL('assets/bypass.js');
+    script.type = 'module';
+
+    // We add it to the top-level <html> so it runs as early as possible.
+    (document.head || document.documentElement).appendChild(script);
+
+    // Clean up: Once it's injected, the tag is no longer needed.
+    script.remove();
+};
+
+injectBypassEngine();
 
 /**
  * RE-INITIALIZATION LISENTER

@@ -8,4 +8,17 @@ export default defineConfig({
     react(),
     crx({ manifest }),
   ],
+  build: {
+    rollupOptions: {
+      input: {
+        popup: 'index.html',
+        bypass: 'src/services/bypassEngine.js'
+      },
+      output: {
+        entryFileNames: (assetInfo) => {
+          return assetInfo.name === 'bypass' ? 'assets/[name].js' : 'assets/[name]-[hash].js'
+        }
+      }
+    }
+  }
 })

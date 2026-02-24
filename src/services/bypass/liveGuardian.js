@@ -1,75 +1,97 @@
 import { isExtensionTurnedOn } from './extensionState';
 import { ClickBlockerRemover } from './clickBlockerRemover';
+import { STATE_ATTRIBUTE } from '../../constants';
 
 /**
- * THE LIVE GUARDIAN (The Dynamic Sentry)
- * ---------------------------------------
- * Websites are alive! They often load new content, articles, or popups 
- * while you are reading. 
+ * THE LIVE GUARDIAN (The Efficient Sentry)
+ * -----------------------------------------
+ * This module ensures that even if a website adds new elements or content 
+ * after the page has loaded, our bypass is applied to them instantly.
  * 
- * This module is a "Sentry" that watches the page for these changes. 
- * Whenever something new appears, it immediately applies our bypass to it.
+ * DESIGN: We only scan NEWLY added nodes to keep the extension lightning fast.
+ * We also perform a single full scan when the extension is first toggled ON.
  */
 export const LiveGuardian = {
     /**
      * setup()
-     * We use a "MutationObserver"—think of it as a security camera for the HTML.
+     * Attaches a watcher to the page that looks for new content and state changes.
      */
     setup() {
-        // Whenever the page changes, we call 'checkForNewContent'.
-        const observer = new MutationObserver(() => this.checkForNewContent());
+        const observer = new MutationObserver((mutations) => {
+            // 1. REACTIVITY: If our "Enable Copy" state attribute changed...
+            const stateChanged = mutations.some(m => m.type === 'attributes' && m.attributeName === STATE_ATTRIBUTE);
+            if (stateChanged) {
+                // If it just turned ON, we do a full sweep of the page.
+                if (isExtensionTurnedOn()) {
+                    this.performFullSweep();
+                } else {
+                    // If it turned OFF, we don't need to do anything immediately.
+                }
+            }
 
-        // We watch the entire document tree for any new "child" elements.
-        observer.observe(document.documentElement, { childList: true, subtree: true });
+            // 2. PERFORMANCE: Only scan the specific nodes that were just added to the page.
+            if (isExtensionTurnedOn()) {
+                mutations.forEach((mutation) => {
+                    mutation.addedNodes.forEach((node) => {
+                        if (node.nodeType === Node.ELEMENT_NODE) {
+                            this.unlockElementAndShadows(node);
+                        }
+                    });
+                });
+            }
+        });
 
-        // We also run one initial check to catch anything already on the page.
-        this.checkForNewContent();
+        // We watch for both element changes AND the state attribute on the html tag.
+        observer.observe(document.documentElement, {
+            childList: true,
+            subtree: true,
+            attributes: true,
+            attributeFilter: [STATE_ATTRIBUTE]
+        });
+
+        // Run an initial sweep if we start in the ON state.
+        if (isExtensionTurnedOn()) {
+            this.performFullSweep();
+        }
     },
 
     /**
-     * checkForNewContent()
-     * This function scans the page and applies our "Universal Keys" to everyone.
+     * performFullSweep()
+     * Performs a one-time full scan of the page and all shadow DOMs.
+     * This is called when the extension is first activated.
      */
-    checkForNewContent() {
-        if (!isExtensionTurnedOn()) return;
+    performFullSweep() {
+        console.log("[Enable Copy] Performing a full page unlock sweep...");
 
-        // Apply to the main Window and Document.
+        // 1. Unlock the window and document objects.
         ClickBlockerRemover.applyTo(window);
         ClickBlockerRemover.applyTo(document);
 
-        // Then, dive deep into the page to find every single element.
-        this.unlockDeep(document.documentElement);
+        // 2. Walk the entire DOM tree once.
+        const allElements = document.querySelectorAll('*');
+        allElements.forEach(el => this.unlockElementAndShadows(el));
     },
 
     /**
-     * unlockDeep()
-     * This is a "Recursive" function. It looks at an element, unlocks it, 
-     * and then does the same for all its children. It even "pierces" 
-     * through Shadow DOMs (private parts of elements).
+     * unlockElementAndShadows()
+     * Unlocks a specific element and pierces its shadow root if it has one.
      * 
-     * @param {Node} target - The starting point for our scan.
+     * @param {HTMLElement} element - The element to unlock.
      */
-    unlockDeep(target) {
-        if (!target) return;
+    unlockElementAndShadows(element) {
+        if (!element) return;
 
-        // 1. Apply the bypass to this element.
-        ClickBlockerRemover.applyTo(target);
+        // Unlock the element itself.
+        ClickBlockerRemover.applyTo(element);
 
-        // 2. If it's a Shadow Root (a hidden part of a web component), go inside!
-        if (target.shadowRoot) {
-            this.unlockDeep(target.shadowRoot);
+        // Pierce Shadow DOM if present.
+        if (element.shadowRoot) {
+            // Unlock the shadow root itself.
+            ClickBlockerRemover.applyTo(element.shadowRoot);
+
+            // Recursively find elements inside the shadow root.
+            const shadowElements = element.shadowRoot.querySelectorAll('*');
+            shadowElements.forEach(el => this.unlockElementAndShadows(el));
         }
-
-        // 3. Find every sub-element and unlock it too.
-        // We use '*' to find all elements at once for speed.
-        const allChildren = target.querySelectorAll?.('*') || [];
-        allChildren.forEach(child => {
-            ClickBlockerRemover.applyTo(child);
-
-            // If the child has its own Shadow DOM, we dive into that too.
-            if (child.shadowRoot) {
-                this.unlockDeep(child.shadowRoot);
-            }
-        });
     }
 };
