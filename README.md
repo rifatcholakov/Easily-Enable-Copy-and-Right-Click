@@ -7,6 +7,7 @@ Easily Enable Copy and Right-Click is a powerful, privacy-first Chrome extension
 ![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
 ![Manifest](https://img.shields.io/badge/manifest-V3-orange.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
+[![Chrome Web Store](https://img.shields.io/badge/Chrome_Web_Store-Available-blue?logo=google-chrome&logoColor=white)](https://chromewebstore.google.com/detail/easily-enable-copy-and-ri/kmgbpbfcjcjmlcjjdchiffllejaiplhg)
 
 ---
 
@@ -32,9 +33,13 @@ The extension works by injecting a tiny, highly-optimized content script that in
 
 ---
 
-## 🚀 Installation (Development Mode)
+## 🚀 Installation
 
-Since this extension is in active development, you can install it manually:
+### 📥 From Chrome Web Store
+The easiest way to install the extension is via the [Chrome Web Store](https://chromewebstore.google.com/detail/easily-enable-copy-and-ri/kmgbpbfcjcjmlcjjdchiffllejaiplhg).
+
+### 🛠️ Development Mode
+Since this extension is in active development, you can also install it manually:
 
 1.  **Clone the repository:**
     ```bash
